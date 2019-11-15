@@ -4,7 +4,7 @@
     <div class="description" v-if="selectedTags.length === 0">
       Sélectionne 2 tags dans la liste
     </div>
-    <div class="description" v-if="selectedTags.length === 1">
+    <div class="description" v-else-if="selectedTags.length === 1">
       Sélectionne encore 1 tag dans la liste
     </div>
     <div class="description" v-else>
@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       listFromApi: [],
-      selectedTags: ["5d41514a8f4abb59988c3245"]
+      selectedTags: []
     };
   },
   components: {

@@ -1,17 +1,20 @@
 <template>
   <div>
     <div class="tag-selected-container">
-      <div class="selected-tag tag" v-for="id in value" :key="id">
-        {{ displaySelectedTag(id) }}
-        <img class="croix" src="../image/croix.svg" />
+      <div
+        class="selected-tag tag"
+        v-for="selectedTag in selectedTags"
+        :key="selectedTag.id"
+      >
+        {{ selectedTag.name }}
+        <img class="croix" src="../image/croix.svg" @click="deleteTag(selectedTag.id)"/>
       </div>
     </div>
-
     <div class="tag-container">
       <div
         class="tag"
-        v-for="tag in tags"
-        :key="tag.id"
+        v-for="tag in unselectedTags"
+        :key="tag._id"
         @click="addTag(tag._id)"
       >
         <p>{{ tag.name.fr }}</p>
@@ -25,12 +28,26 @@
 export default {
   name: "tagList",
   props: ["label", "maxSelected", "tags", "value"],
-  methods: {
-    displaySelectedTag(id) {
-      return this.tags.find(tag => tag._id === id).name.fr;
+  computed: {
+    unselectedTags() {
+      return this.tags.filter(t => this.value.indexOf(t._id) === -1);
     },
+    selectedTags() {
+      let array = [];
+      this.value.map(v =>
+        this.tags.map(t => (t._id === v ? array.push({id: t._id, name:t.name.fr}) : ""))
+      );
+      return array;
+    }
+  },
+  methods: {
     addTag(id) {
-      this.value.push(id);
+      if (this.value.length < 2) {
+        this.value.push(id);
+      }
+    },
+    deleteTag(id) {
+      this.value.splice(this.value.indexOf(id), 1);
     }
   }
 };
@@ -48,6 +65,7 @@ export default {
   padding: 0.8em 1.5em;
   padding-right: 2em;
   display: flex;
+  margin: 0.5em;
 }
 .selected-tag {
   background: #fabe3c;
