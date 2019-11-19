@@ -1,20 +1,24 @@
 <template>
   <div id="app">
-    <div class="label">Tags</div>
-    <div class="description" v-if="selectedTags.length === 0">
-      Sélectionne 2 tags dans la liste
+    <div class="label-description">
+      <div class="label">Tags</div>
+      <div class="description">
+        {{ description[`${selectedTags.length}-selectedTags`][lang] }}
+      </div>
     </div>
-    <div class="description" v-else-if="selectedTags.length === 1">
-      Sélectionne encore 1 tag dans la liste
-    </div>
-    <div class="description" v-else>
-      Vous devez enlever un tag sélectionné pour en choisir un autre
+    <div class="lang-select">
+      <select name="lang" v-model="lang">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
     </div>
     <tagList
       label="tags"
       maxSelected="2"
       :tags="listFromApi"
       v-model="selectedTags"
+      :lang="lang"
     />
   </div>
 </template>
@@ -27,8 +31,26 @@ export default {
   name: "app",
   data() {
     return {
+      description: {
+        "0-selectedTags": {
+          fr: "Sélectionne 2 tags dans la liste",
+          en: "Select 2 tags from the list",
+          es: "Seleccione 2 etiquetas de la lista"
+        },
+        "1-selectedTags": {
+          fr: "Sélectionne encore 1 tag dans la liste",
+          en: "Select one more tag from the list",
+          es: "Seleccione una etiqueta más de la lista"
+        },
+        "2-selectedTags": {
+          fr: "Vous devez enlever un tag sélectionné pour en choisir un autre",
+          en: "You must remove a selected tag to choose another",
+          es: "Debe eliminar una etiqueta seleccionada para elegir otra"
+        }
+      },
       listFromApi: [],
-      selectedTags: []
+      selectedTags: [],
+      lang: "fr"
     };
   },
   components: {
@@ -41,8 +63,17 @@ export default {
       )
       .then(response => {
         this.listFromApi = response.data.data;
+        // this.setLang();
       });
   }
+  // methods: {
+  //   setLang() {
+  //     this.listFromApi.map(r => {
+  //       r.nameSelected = r.name[this.lang];
+  //       r.slugSelected = r.slug[this.lang];
+  //     });
+  //   }
+  // }
 };
 </script>
 
@@ -65,6 +96,13 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
   font-size: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 60%;
+}
+.label-description {
+  flex: 1 1;
 }
 .label {
   font-family: "Raleway";
@@ -79,5 +117,26 @@ export default {
   color: #0c3944;
   text-align: left;
   font-weight: 300;
+}
+.lang-select {
+  border: 2px solid #e8e8e8;
+  border-radius: 6px;
+}
+.lang-select select {
+  font-family: "Raleway";
+  font-weight: 600;
+  font-size: 16px;
+  background-color: white;
+  color: #0c3944;
+  border: none;
+  appearance: button;
+  outline: none;
+  padding: 0.5em 2em 0.5em 1em;
+  height: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("./image/down.svg") no-repeat calc(100% - 10px);
+  cursor: pointer;
 }
 </style>

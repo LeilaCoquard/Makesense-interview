@@ -4,10 +4,14 @@
       <div
         class="selected-tag tag"
         v-for="selectedTag in selectedTags"
-        :key="selectedTag.id"
+        :key="selectedTag._id"
       >
-        {{ selectedTag.name }}
-        <img class="croix" src="../image/croix.svg" @click="deleteTag(selectedTag.id)"/>
+        {{ selectedTag.name[lang] }}
+        <img
+          class="croix"
+          src="../image/croix.svg"
+          @click="deleteTag(selectedTag._id)"
+        />
       </div>
     </div>
     <div class="tag-container">
@@ -17,7 +21,7 @@
         :key="tag._id"
         @click="addTag(tag._id)"
       >
-        <p>{{ tag.name.fr }}</p>
+        <p>{{ tag.name[lang] }}</p>
         <img class="plus" src="../image/plus.svg" />
       </div>
     </div>
@@ -27,17 +31,15 @@
 <script>
 export default {
   name: "tagList",
-  props: ["label", "maxSelected", "tags", "value"],
+  props: ["label", "maxSelected", "tags", "value", "lang"],
   computed: {
     unselectedTags() {
       return this.tags.filter(t => this.value.indexOf(t._id) === -1);
     },
     selectedTags() {
-      let array = [];
-      this.value.map(v =>
-        this.tags.map(t => (t._id === v ? array.push({id: t._id, name:t.name.fr}) : ""))
-      );
-      return array;
+      return this.value.map(v => this.tags.find(t=> t._id === v))
+      // Autre méthode
+      // return this.tags.filter(t => this.value.indexOf(t._id) !== -1)
     }
   },
   methods: {
@@ -63,13 +65,14 @@ export default {
   border: 2px solid #979797;
   border-radius: 1.6em;
   padding: 0.8em 1.5em;
-  padding-right: 2em;
   display: flex;
   margin: 0.5em;
+  cursor: pointer;
 }
 .selected-tag {
   background: #fabe3c;
   border-color: #fabe3c;
+  cursor: default;
 }
 .tag-container {
   border: 2px dashed #e8e8e8;
@@ -85,5 +88,6 @@ p {
 .plus,
 .croix {
   margin: 0.2em;
+  cursor: pointer;
 }
 </style>
